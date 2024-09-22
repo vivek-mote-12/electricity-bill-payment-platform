@@ -8,7 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 
 @Entity
 @Getter
@@ -59,6 +59,10 @@ public class Customer {
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<Payment> payments;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<CustomerCardDetails> customerCardDetails;
 }
 
 
