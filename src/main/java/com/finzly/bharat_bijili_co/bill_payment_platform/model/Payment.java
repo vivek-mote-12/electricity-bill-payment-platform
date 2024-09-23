@@ -1,7 +1,7 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.model;
 
-import com.finzly.bharat_bijili_co.bill_payment_platform.util.PaymentMethod;
-import com.finzly.bharat_bijili_co.bill_payment_platform.util.PaymentStatus;
+import com.finzly.bharat_bijili_co.bill_payment_platform.enums.PaymentMethod;
+import com.finzly.bharat_bijili_co.bill_payment_platform.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
