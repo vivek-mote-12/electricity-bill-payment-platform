@@ -41,7 +41,7 @@ public class Customer {
     private String city;
 
     @Column(nullable = false)
-    private long meterReading;
+    private Long meterReading;
 
     @Column()
     private Date previousBillDate;

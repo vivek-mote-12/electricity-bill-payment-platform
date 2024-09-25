@@ -11,7 +11,6 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,6 +49,47 @@ public class GlobalExceptionHandler {
     //Handle invalid file format exception
     @ExceptionHandler(InvalidFileFormatException.class)
     public ResponseEntity<GenericResponse<?>> handleInvalidFileFormatException(InvalidFileFormatException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    //Bill not found exception
+    @ExceptionHandler(BillNotFoundException.class)
+    public ResponseEntity<GenericResponse<?>> handleBillNotFoundException(BillNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BillAlreadyMarkedAsPaidException.class)
+    public ResponseEntity<GenericResponse<?>> handleBillAlreadyMarkedAsPaidException(BillAlreadyMarkedAsPaidException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<GenericResponse<?>> handlePaymentNotFoundException(PaymentNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BillCannotBeDeletedException.class)
+    public ResponseEntity<GenericResponse<?>> handleBillCannotBeDeleteException(BillCannotBeDeletedException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvoiceCannotBeGeneratedException.class)
+    public ResponseEntity<GenericResponse<?>> handleInvoiceCannotBeGeneratedException(InvoiceCannotBeGeneratedException ex, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
 

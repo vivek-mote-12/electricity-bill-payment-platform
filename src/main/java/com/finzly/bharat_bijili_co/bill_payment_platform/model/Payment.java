@@ -47,7 +47,7 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column()
+    @Column(nullable = false)
     private String txnRefId;
 
     @CreationTimestamp

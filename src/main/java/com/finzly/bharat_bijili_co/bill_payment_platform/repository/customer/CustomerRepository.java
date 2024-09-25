@@ -18,6 +18,4 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
 
 
     void deleteByCustomerId(String customerId);
-
-
 }

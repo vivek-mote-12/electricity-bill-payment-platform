@@ -32,7 +32,7 @@ public class Bill {
     private Customer customer;
 
     @Column(nullable = false)
-    private Integer unitsConsumed;
+    private Long unitsConsumed;
 
     @Column(nullable = false)
     private Date startDate;
@@ -41,19 +41,22 @@ public class Bill {
     private Date endDate;
 
     @Column(nullable = false)
-    private Integer amountDue;
+    private Double amountDue;
 
     @Column(nullable = false)
     private Date dueDate;
 
     @Column(nullable = false)
-    private Boolean isPaid=false;
+    private Boolean isPaid;
+
+    @Column()
+    private String paymentId;
 
     @Column(nullable = false)
-    private Boolean isDiscountApplied=false;
+    private Boolean isDiscountApplied;
 
     @Column(nullable = false)
-    private Integer discountAmount=0;
+    private Integer discountAmount;
 
     @CreationTimestamp
     private Date createdAt;
@@ -67,14 +70,13 @@ public class Bill {
 
     @PrePersist
     public void prePersist() {
+        this.discountAmount=0;
+        this.isDiscountApplied=false;
+        this.isPaid=false;
+        this.paymentId=null;
+
         if (this.billId == null) {
             this.billId = UUID.randomUUID().toString(); // Auto-generate UUID for billId
-        }
-
-        // Automatically set the dueDate to 15 days after endDate
-        if (this.endDate != null && this.dueDate == null) {
-            LocalDate endLocalDate = this.endDate.toLocalDate();
-            this.dueDate = Date.valueOf(endLocalDate.plus(15, ChronoUnit.DAYS));
         }
     }
 }
