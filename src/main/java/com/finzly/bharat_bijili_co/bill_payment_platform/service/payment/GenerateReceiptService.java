@@ -1,15 +1,16 @@
-package com.finzly.bharat_bijili_co.bill_payment_platform.service.bill;
+package com.finzly.bharat_bijili_co.bill_payment_platform.service.payment;
 
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.BillNotFoundException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.InvoiceCannotBeGeneratedException;
+import com.finzly.bharat_bijili_co.bill_payment_platform.exception.PaymentNotFoundException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Bill;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Customer;
-import com.finzly.bharat_bijili_co.bill_payment_platform.repository.bill.BillRepository;
+import com.finzly.bharat_bijili_co.bill_payment_platform.model.Payment;
+import com.finzly.bharat_bijili_co.bill_payment_platform.repository.payment.PaymentRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -20,32 +21,23 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class InvoiceGenerationService {
-    private final BillRepository billRepository;
+public class GenerateReceiptService {
+    private final PaymentRepository paymentRepository;
 
-    public InvoiceGenerationService(BillRepository billRepository){
-        this.billRepository=billRepository;
+    public GenerateReceiptService(PaymentRepository paymentRepository){
+        this.paymentRepository=paymentRepository;
     }
 
-    public ByteArrayInputStream generateInvoice(String billId) throws IOException, DocumentException {
-        // Fetch bill by ID
-        Bill bill = billRepository.findByBillId(billId)
-                .orElseThrow(() -> new BillNotFoundException("Bill not found with ID: " + billId));
+    public ByteArrayInputStream generateReceipt(String paymentId) throws IOException, DocumentException {
+        // Fetch payment by Id
+        Payment payment=paymentRepository.findByPaymentId(paymentId).orElseThrow(()
+                -> new PaymentNotFoundException("Payment not found"));
 
-        // Check if the bill is already paid
-        if (bill.getIsPaid()) {
-            throw new InvoiceCannotBeGeneratedException("Invoice cannot be generated for a paid bill.");
-        }
+        //Fetch Bill details
+        Bill bill=payment.getBill();
 
         // Fetch customer details
         Customer customer = bill.getCustomer();
-
-        // Apply discount if payment is made before the due date
-        LocalDate dueDate = bill.getDueDate().toLocalDate();
-        double discount = 0.0;
-        if (LocalDate.now().isBefore(dueDate)) {
-            discount = bill.getAmountDue() * 0.05;
-        }
 
         // Create PDF
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -63,7 +55,7 @@ public class InvoiceGenerationService {
         document.add(companytitle);
 
         // Add centered title with larger font
-        Paragraph title = new Paragraph("Invoice", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 26, BaseColor.BLACK));
+        Paragraph title = new Paragraph("Receipt", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 26, BaseColor.BLACK));
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
         document.add(new Paragraph(" "));
@@ -126,7 +118,7 @@ public class InvoiceGenerationService {
         document.add(new Paragraph(" "));
 
         // Bill Details
-        Paragraph billTitle = new Paragraph("Bill Details", FontFactory.getFont(FontFactory.HELVETICA, 18, BaseColor.BLACK));
+        Paragraph billTitle = new Paragraph("Payment Details", FontFactory.getFont(FontFactory.HELVETICA, 18, BaseColor.BLACK));
         billTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(billTitle);
         document.add(new Paragraph(" "));
@@ -178,49 +170,68 @@ public class InvoiceGenerationService {
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         billTable.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Due Date", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell = new PdfPCell(new Phrase("Discount", FontFactory.getFont(FontFactory.HELVETICA, 16)));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         billTable.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(bill.getDueDate().toString(), FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell = new PdfPCell(new Phrase("$"+Double.toString(bill.getDiscountAmount()), FontFactory.getFont(FontFactory.HELVETICA, 16)));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         billTable.addCell(cell);
 
-        // Apply discount if before due date
-        if (discount > 0.0) {
-            cell = new PdfPCell(new Phrase("Discount (5%)", FontFactory.getFont(FontFactory.HELVETICA, 16)));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            billTable.addCell(cell);
+        cell = new PdfPCell(new Phrase("Total Due After Discount", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("$"+Double.toString(discount), FontFactory.getFont(FontFactory.HELVETICA, 16)));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            billTable.addCell(cell);
+        cell = new PdfPCell(new Phrase("$"+Double.toString(payment.getAmount()), FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("Total Due After Discount", FontFactory.getFont(FontFactory.HELVETICA, 16)));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            billTable.addCell(cell);
+        cell = new PdfPCell(new Phrase("Date", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("$"+Double.toString(bill.getAmountDue() - discount), FontFactory.getFont(FontFactory.HELVETICA, 16)));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            billTable.addCell(cell);
+        cell = new PdfPCell(new Phrase(String.valueOf(payment.getPaymentDate()), FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
 
-        }
+        cell = new PdfPCell(new Phrase("Method", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(String.valueOf(payment.getPaymentMethod()), FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("Transaction reference ID", FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(payment.getTxnRefId(), FontFactory.getFont(FontFactory.HELVETICA, 16)));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        billTable.addCell(cell);
+
+
+
         document.add(billTable);
 
         // Add generation date and discount note
-        Paragraph footer = new Paragraph("Invoice Generated on: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        Paragraph footer = new Paragraph("Receipt Generated on: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 FontFactory.getFont(FontFactory.HELVETICA, 12));
         footer.setAlignment(Element.ALIGN_RIGHT);
         document.add(footer);
 
         // Discount note
-        Paragraph discountNote = new Paragraph("Note: Discount applies if payment is made before the due date.",
+        Paragraph discountNote = new Paragraph("Verified",
                 FontFactory.getFont(FontFactory.HELVETICA, 12));
         discountNote.setAlignment(Element.ALIGN_RIGHT);
         document.add(discountNote);

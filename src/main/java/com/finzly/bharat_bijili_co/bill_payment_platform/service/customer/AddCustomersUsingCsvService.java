@@ -95,8 +95,8 @@ public class AddCustomersUsingCsvService {
                     continue;
                 }
 
-                existingCustomer = customerRepository.findByEmail(phone);
-                if (existingCustomer.isPresent()) {
+                Optional<Customer> existingCustomer2 = customerRepository.findByEmail(email);
+                if (existingCustomer2.isPresent()) {
                     failedRecords.add("Line " + lineNumber + ": Duplicate email: " + email);
                     lineNumber++;
                     continue;

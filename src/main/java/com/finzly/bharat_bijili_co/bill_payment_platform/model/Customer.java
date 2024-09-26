@@ -58,10 +58,6 @@ public class Customer {
 
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
-    private List<Payment> payments;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer")
     private List<CustomerCardDetails> customerCardDetails;
 }
 

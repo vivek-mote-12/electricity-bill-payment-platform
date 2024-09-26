@@ -1,8 +1,10 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.controller.bill;
 
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CreateBillRequest;
+import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.GetInvoiceDetailsRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.MarkBillAsPaidRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.GenericResponse;
+import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.GetInvoiceResponse;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Bill;
 import com.finzly.bharat_bijili_co.bill_payment_platform.service.bill.*;
 import com.itextpdf.text.DocumentException;
@@ -25,17 +27,20 @@ public class BillController {
     private final BillPaymentService billPaymentService;
     private final DeleteBillService deleteBillService;
     private final InvoiceGenerationService invoiceGenerationService;
+    private final GetInvoiceService getInvoiceService;
 
     public BillController(CreateBillService createBillService,
                           GetBillService getBillService,
                           BillPaymentService billPaymentService,
                           DeleteBillService deleteBillService,
-                          InvoiceGenerationService invoiceGenerationService){
+                          InvoiceGenerationService invoiceGenerationService,
+                          GetInvoiceService getInvoiceService){
         this.createBillService=createBillService;
         this.getBillService=getBillService;
         this.billPaymentService=billPaymentService;
         this.deleteBillService=deleteBillService;
         this.invoiceGenerationService=invoiceGenerationService;
+        this.getInvoiceService=getInvoiceService;
     }
 
     @PostMapping("/generate")
@@ -70,7 +75,14 @@ public class BillController {
         return new ResponseEntity<>(new GenericResponse<>("Bill with given Id deleted",null),HttpStatus.OK);
     }
 
-    @GetMapping("/{billId}/invoice")
+    @PostMapping("/{billId}/invoice/details")
+    public ResponseEntity<?> getInvoiceDetails(@PathVariable("billId") String billId, @RequestBody @Valid GetInvoiceDetailsRequest
+                                               getInvoiceDetailsRequest) throws IOException, DocumentException {
+        GetInvoiceResponse getInvoiceResponse=getInvoiceService.getInvoiceDetails(billId,getInvoiceDetailsRequest);
+        return new ResponseEntity<>(new GenericResponse<>("Success",getInvoiceResponse),HttpStatus.OK);
+    }
+
+    @GetMapping("/{billId}/invoice/pdf")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable String billId) throws IOException, DocumentException {
         // Generate PDF as byte array
         ByteArrayInputStream pdfStream = invoiceGenerationService.generateInvoice(billId);

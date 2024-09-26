@@ -29,12 +29,8 @@ public class Payment {
     @JoinColumn
     private Bill bill;
 
-    @ManyToOne
-    @JoinColumn
-    private Customer customer;
-
     @Column(nullable = false)
-    private Integer amount;
+    private Double amount;
 
     @Column(nullable = false)
     private Date paymentDate;

@@ -56,7 +56,7 @@ public class Bill {
     private Boolean isDiscountApplied;
 
     @Column(nullable = false)
-    private Integer discountAmount;
+    private Double discountAmount;
 
     @CreationTimestamp
     private Date createdAt;
@@ -70,7 +70,7 @@ public class Bill {
 
     @PrePersist
     public void prePersist() {
-        this.discountAmount=0;
+        this.discountAmount=0.0;
         this.isDiscountApplied=false;
         this.isPaid=false;
         this.paymentId=null;
