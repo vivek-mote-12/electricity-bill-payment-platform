@@ -2,6 +2,7 @@ package com.finzly.bharat_bijili_co.bill_payment_platform.model;
 
 //import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,12 +11,19 @@ import java.sql.Date;
 //import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table (name = "CustomerCardDetails")
 public class CustomerCardDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cardId", nullable = false, unique = true)
-    private Integer cardId;
+    private Integer id;
+
+    @Column(name = "cardId", nullable = false)
+    private String cardId;
 
     @JoinColumn
     @ManyToOne
