@@ -96,6 +96,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(FailedToSendEmailException.class)
+    public ResponseEntity<GenericResponse<?>> handleFailedToSendEmailException(FailedToSendEmailException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidOrExpiredOtpException.class)
+    public ResponseEntity<GenericResponse<?>> handleInvalidOrExpiredException(InvalidOrExpiredOtpException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<GenericResponse<?>> handleRuntimeExceptions(RuntimeException ex) {
         System.out.println(ex.toString());
