@@ -5,11 +5,13 @@ import com.finzly.bharat_bijili_co.bill_payment_platform.enums.CustomerCardType;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.CustomerCardDetails;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateCustomerCardDetailsRequest {
 
 

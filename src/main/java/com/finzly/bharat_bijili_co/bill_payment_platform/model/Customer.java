@@ -59,6 +59,12 @@ public class Customer {
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<CustomerCardDetails> customerCardDetails;
+
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Wallet wallet;
+
 }
 
 

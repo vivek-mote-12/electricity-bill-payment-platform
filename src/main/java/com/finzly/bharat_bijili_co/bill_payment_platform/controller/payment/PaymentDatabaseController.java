@@ -20,14 +20,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
-public class PaymentController {
+public class PaymentDatabaseController {
     private final RecordPaymentService recordPaymentService;
     private GetPaymentService getPaymentService;
     private GenerateReceiptService generateReceiptService;
 
-    public PaymentController(RecordPaymentService recordPaymentService,
-                             GetPaymentService getPaymentService,
-                             GenerateReceiptService generateReceiptService){
+    public PaymentDatabaseController(RecordPaymentService recordPaymentService,
+                                     GetPaymentService getPaymentService,
+                                     GenerateReceiptService generateReceiptService){
         this.recordPaymentService=recordPaymentService;
         this.getPaymentService=getPaymentService;
         this.generateReceiptService=generateReceiptService;

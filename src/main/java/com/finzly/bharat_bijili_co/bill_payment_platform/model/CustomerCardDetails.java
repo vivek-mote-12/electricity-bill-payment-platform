@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Date;
+import java.util.UUID;
 //import java.time.LocalDateTime;
 //import java.util.List;
 
@@ -52,4 +53,12 @@ public class CustomerCardDetails {
 
     @UpdateTimestamp
     private Date updatedAt;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (this.cardId == null) {
+            this.cardId = UUID.randomUUID().toString(); // Auto-generate UUID for cardId
+        }
+    }
 }

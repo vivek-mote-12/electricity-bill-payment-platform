@@ -113,6 +113,54 @@ public class GlobalExceptionHandler {
     }
 
 
+
+    //Not able to send OTP on Email
+    @ExceptionHandler(NotAbleToSendOtpException.class)
+    public ResponseEntity<GenericResponse<?>> handleNotAbleToSendOtpException(NotAbleToSendOtpException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    //Customer Card Details Already Exists
+    @ExceptionHandler(CustomerCardDetailsAlreadyExistsException.class)
+    public ResponseEntity<GenericResponse<?>> handleCustomerCardDetailsAlreadyExistsException(CustomerCardDetailsAlreadyExistsException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.OK);
+    }
+
+    //Customer Card Details Not Found
+    @ExceptionHandler(CustomerCardDetailsNotFoundException.class)
+    public ResponseEntity<GenericResponse<?>> handleCustomerCardDetailsNotFoundException(CustomerCardDetailsNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+    // Wallet not found for custId
+    @ExceptionHandler(WalletNotFoundException.class)
+    public ResponseEntity<GenericResponse<?>> handleWalletNotFoundException(WalletNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+
+    // Wallet balance is not sufficient to pay bill
+    @ExceptionHandler(InsufficientWalletBalanceException.class)
+    public ResponseEntity<GenericResponse<?>> handleInsufficientWalletBalanceException(InsufficientWalletBalanceException ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<GenericResponse<?>> handleRuntimeExceptions(RuntimeException ex) {
         System.out.println(ex.toString());
