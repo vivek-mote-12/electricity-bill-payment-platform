@@ -51,6 +51,7 @@ public class CustomerController {
                 , HttpStatus.CREATED);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<?> getAllCustomers(){
         List<Customer> customers=getCustomersService.getAllCustomers();

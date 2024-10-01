@@ -40,4 +40,8 @@ public class AuthService {
             throw new FailedToSendEmailException("Invalid or Expired OTP!");
         }
     }
+
+    public boolean validationToken(String token){
+        return true;
+    }
 }

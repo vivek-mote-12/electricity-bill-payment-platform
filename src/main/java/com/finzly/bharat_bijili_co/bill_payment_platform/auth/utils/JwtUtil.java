@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class JwtUtil {
     private static final String SECRET_KEY = "myVeryLongAndSecureSecretKeyForJWTSigning"; // Use an even stronger key in production
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 120; // 5 Days validity
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 240; // 10 Days validity
 
     private static final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 

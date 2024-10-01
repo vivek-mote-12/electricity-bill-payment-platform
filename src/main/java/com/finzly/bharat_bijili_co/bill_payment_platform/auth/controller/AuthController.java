@@ -27,4 +27,12 @@ public class AuthController {
         String token= authService.verifyOtp(otpVerificationRequest);
         return new ResponseEntity<>(new GenericResponse<>("Token generated",token),HttpStatus.OK);
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestBody String token) {
+        if (authService.validationToken(token)) {
+            return new ResponseEntity<>(new GenericResponse<>("Valid token",null),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new GenericResponse<>("Invalid token",null),HttpStatus.UNAUTHORIZED);
+    }
 }
