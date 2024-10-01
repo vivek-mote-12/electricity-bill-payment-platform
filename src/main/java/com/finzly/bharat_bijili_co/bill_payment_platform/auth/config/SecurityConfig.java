@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for testing
                 .authorizeHttpRequests(authz ->
                         authz
-                            .requestMatchers("/auth/login", "/auth/verify-otp","/auth/validate","/api").permitAll()
+                            .requestMatchers("/auth/**","/api/**").permitAll()
                             .requestMatchers("/customer/**").hasRole("CUSTOMER")
                             .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                             .requestMatchers("/admin/**").hasRole("ADMIN")
