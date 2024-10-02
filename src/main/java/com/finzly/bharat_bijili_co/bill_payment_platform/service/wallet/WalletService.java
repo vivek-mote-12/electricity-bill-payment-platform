@@ -1,6 +1,7 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.service.wallet;
 
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.WalletPaymentRequest;
+import com.finzly.bharat_bijili_co.bill_payment_platform.enums.PaymentStatus;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.CustomerNotFoundException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.InsufficientWalletBalanceException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.WalletNotFoundException;
@@ -35,7 +36,9 @@ public class WalletService {
 
         BigDecimal amount = BigDecimal.valueOf(walletPaymentRequest.getAmount());
         if(wallet.getBalance().compareTo(amount) < 0){
-            throw new InsufficientWalletBalanceException("Wallet Balance is insufficient to pay bill : " + wallet.getBalance());
+            walletPaymentRequest.setPaymentStatus(PaymentStatus.FAILED);
+            return walletRepository.save(wallet);
+//            throw new InsufficientWalletBalanceException("Wallet Balance is insufficient to pay bill : " + wallet.getBalance());
         }
         wallet.setBalance(wallet.getBalance().subtract(amount));
         walletRepository.save(wallet);

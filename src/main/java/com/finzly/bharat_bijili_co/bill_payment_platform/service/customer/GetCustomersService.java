@@ -25,4 +25,10 @@ public class GetCustomersService {
                 new CustomerNotFoundException("Customer with ID "+customerId+" does not exists")
         );
     }
+
+    public Customer getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(()->
+                new CustomerNotFoundException("Customer with email "+email+" does not exists")
+        );
+    }
 }

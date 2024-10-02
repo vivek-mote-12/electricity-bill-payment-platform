@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.UUID;
+
 @Data
 @Getter
 @Setter
@@ -21,8 +23,7 @@ public class PaymentMethodRequest {
     @NotBlank(message = "Bill ID is required")
     private String billId;
 
-    @NotBlank(message = "Transaction reference ID is required")
-    private String txnRefId;
+//    private String txnRefId;
 
     @NotNull(message = "Payment method is required")
     private PaymentMethod paymentMethod;

@@ -3,6 +3,7 @@ package com.finzly.bharat_bijili_co.bill_payment_platform.controller.payment;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.RecordPaymentRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.WalletPaymentRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.GenericResponse;
+import com.finzly.bharat_bijili_co.bill_payment_platform.enums.PaymentStatus;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Wallet;
 import com.finzly.bharat_bijili_co.bill_payment_platform.service.wallet.WalletService;
 import jakarta.validation.Valid;
@@ -35,6 +36,11 @@ public class WalletPaymentController {
                 .paymentStatus(walletPaymentRequest.getPaymentStatus())
                 .txnRefId(UUID.randomUUID().toString())
                 .build();
+
+        if(walletPaymentRequest.getPaymentStatus() == PaymentStatus.FAILED){
+            paymentDatabaseController.recordPayment(recordPaymentRequest);
+            return new ResponseEntity<>(new GenericResponse<>("Wallet Balance is Insufficient Please Add balance to Wallet",wallet), HttpStatus.BAD_REQUEST);
+        }
 
         return paymentDatabaseController.recordPayment(recordPaymentRequest);
     }

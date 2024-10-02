@@ -33,7 +33,7 @@ public class MainPaymentController {
                 }
 
                 // Process card payment
-                cardPaymentController.initiatePayment(cardPaymentRequest);
+                return cardPaymentController.initiatePayment(cardPaymentRequest);
 
 //                if (paymentMethodRequest.getPaymentSwitchOnMethod() instanceof CardPaymentRequest) {
 //                    cardPaymentRequest = (CardPaymentRequest) paymentMethodRequest.getPaymentSwitchOnMethod();
@@ -45,7 +45,7 @@ public class MainPaymentController {
 //                cardPaymentRequest = (CardPaymentRequest) paymentMethodRequest.getPaymentSwitchOnMethod();
 //
 //                cardPaymentController.initiatePayment(cardPaymentRequest);
-                break;
+
 
             case PaymentMethod.WALLET:
 
@@ -56,7 +56,7 @@ public class MainPaymentController {
                 }
 
                 // Process wallet payment
-                walletPaymentController.payUsingWallet(walletPaymentRequest);
+                return walletPaymentController.payUsingWallet(walletPaymentRequest);
 
 //                if (paymentMethodRequest.getPaymentSwitchOnMethod() instanceof WalletPaymentRequest) {
 //                    WalletPaymentRequest walletPaymentRequest = (WalletPaymentRequest) paymentMethodRequest.getPaymentSwitchOnMethod();
@@ -69,11 +69,11 @@ public class MainPaymentController {
 //                WalletPaymentRequest walletPaymentRequest = (WalletPaymentRequest) paymentMethodRequest.getPaymentSwitchOnMethod();
                 // Process wallet payment
 //                walletPaymentController.payUsingWallet(walletPaymentRequest);
-                break;
+
 
             default:
                 return ResponseEntity.badRequest().body("Unsupported payment method.");
         }
-        return ResponseEntity.ok("Payment processed successfully.");
+//        return ResponseEntity.ok("Payment processed successfully.");
     }
 }

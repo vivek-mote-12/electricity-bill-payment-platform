@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @Getter
@@ -31,8 +33,8 @@ public class WalletPaymentRequest extends PaymentSwitchOnMethodRequest {
     @NotNull(message = "Payment status cannot be null")
     private PaymentStatus paymentStatus;
 
-    @NotBlank(message = "Txn ref Id is required")
-    private String txnRefId;
+//    @NotBlank(message = "Txn ref Id is required")
+//    private String txnRefId;
 
     // Constructor that accepts PaymentMethodRequest
     public WalletPaymentRequest(PaymentMethodRequest paymentMethodRequest) {
@@ -41,6 +43,6 @@ public class WalletPaymentRequest extends PaymentSwitchOnMethodRequest {
         this.billId = paymentMethodRequest.getBillId();
         this.paymentMethod = paymentMethodRequest.getPaymentMethod();
         this.paymentStatus = paymentMethodRequest.getPaymentStatus();
-        this.txnRefId = paymentMethodRequest.getTxnRefId();
+//        this.txnRefId = UUID.randomUUID().toString();
     }
 }
