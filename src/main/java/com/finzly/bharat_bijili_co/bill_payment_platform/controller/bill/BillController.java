@@ -8,6 +8,7 @@ import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.GetInvoice
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Bill;
 import com.finzly.bharat_bijili_co.bill_payment_platform.service.bill.*;
 import com.itextpdf.text.DocumentException;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,19 +29,22 @@ public class BillController {
     private final DeleteBillService deleteBillService;
     private final InvoiceGenerationService invoiceGenerationService;
     private final GetInvoiceService getInvoiceService;
+    private final SendInvoiceMailService sendInvoiceMailService;
 
     public BillController(CreateBillService createBillService,
                           GetBillService getBillService,
                           BillPaymentService billPaymentService,
                           DeleteBillService deleteBillService,
                           InvoiceGenerationService invoiceGenerationService,
-                          GetInvoiceService getInvoiceService){
+                          GetInvoiceService getInvoiceService,
+                          SendInvoiceMailService sendInvoiceMailService){
         this.createBillService=createBillService;
         this.getBillService=getBillService;
         this.billPaymentService=billPaymentService;
         this.deleteBillService=deleteBillService;
         this.invoiceGenerationService=invoiceGenerationService;
         this.getInvoiceService=getInvoiceService;
+        this.sendInvoiceMailService=sendInvoiceMailService;
     }
 
     @PostMapping("/generate")
@@ -52,6 +56,18 @@ public class BillController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getAllBills(@PathVariable("customerId")String customerId){
         List<Bill> bills=getBillService.getAllBillsForCustomer(customerId);
+        return new ResponseEntity<>(new GenericResponse<>("Success",bills),HttpStatus.OK);
+    }
+
+    @GetMapping("/pending/all")
+    public ResponseEntity<?> getAllPendingBills() {
+        List<Bill> bills= getBillService.getAllPendingBills();
+        return new ResponseEntity<>(new GenericResponse<>("Success",bills),HttpStatus.OK);
+    }
+
+    @GetMapping("/customer/{customerId}/pending")
+    public ResponseEntity<?> getPendingBillsForCustomer(@PathVariable String customerId) {
+        List<Bill> bills= getBillService.getPendingBillsForCustomer(customerId);
         return new ResponseEntity<>(new GenericResponse<>("Success",bills),HttpStatus.OK);
     }
 
@@ -96,5 +112,11 @@ public class BillController {
                 .headers(headers)
                 .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
                 .body(pdfStream.readAllBytes());
+    }
+
+    @PostMapping("/{billId}/send-invoice")
+    public ResponseEntity<?> sendInvoiceEmail(@PathVariable String billId) throws MessagingException, DocumentException, IOException {
+        String message= sendInvoiceMailService.sendInvoiceEmailService(billId);
+        return new ResponseEntity<>(new GenericResponse<>("Mail Sent Successfully",message),HttpStatus.OK);
     }
 }

@@ -10,4 +10,9 @@ import java.util.Optional;
 public interface BillRepository extends JpaRepository<Bill,Integer> {
     Optional<Bill> findByBillId(String billId);
     List<Bill> findByCustomerOrderByIsPaidAscDueDateDesc(Customer customer);
+
+    // Fetching pending bills (where isPaid = false) and sorting them by dueDate in descending order
+    List<Bill> findByIsPaidFalseOrderByDueDateDesc();
+
+    List<Bill> findByCustomerAndIsPaidFalseOrderByDueDateDesc(Customer customer);
 }

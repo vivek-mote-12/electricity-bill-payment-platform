@@ -1,8 +1,10 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.service.payment;
 
+import com.finzly.bharat_bijili_co.bill_payment_platform.enums.PaymentStatus;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.BillNotFoundException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.InvoiceCannotBeGeneratedException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.exception.PaymentNotFoundException;
+import com.finzly.bharat_bijili_co.bill_payment_platform.exception.ReceiptCannotBeGenerated;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Bill;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Customer;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Payment;
@@ -32,6 +34,10 @@ public class GenerateReceiptService {
         // Fetch payment by Id
         Payment payment=paymentRepository.findByPaymentId(paymentId).orElseThrow(()
                 -> new PaymentNotFoundException("Payment not found"));
+
+        if(payment.getPaymentStatus()== PaymentStatus.FAILED){
+            throw new ReceiptCannotBeGenerated("Receipt cannot be generated for Failed Payments");
+        }
 
         //Fetch Bill details
         Bill bill=payment.getBill();

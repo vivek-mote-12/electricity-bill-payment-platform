@@ -27,7 +27,19 @@ public class GetBillService {
         return billRepository.findByCustomerOrderByIsPaidAscDueDateDesc(customer);
     }
 
+    public List<Bill> getPendingBillsForCustomer(String customerId) {
+        Customer customer = customerRepository.findByCustomerId(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with Id " + customerId));
+
+        // Fetch only unpaid bills
+        return billRepository.findByCustomerAndIsPaidFalseOrderByDueDateDesc(customer);
+    }
+
     public Bill getBillById(String billId){
         return billRepository.findByBillId(billId).orElseThrow(()->new BillNotFoundException("Bill not found"));
+    }
+
+    public List<Bill> getAllPendingBills() {
+        return billRepository.findByIsPaidFalseOrderByDueDateDesc();
     }
 }

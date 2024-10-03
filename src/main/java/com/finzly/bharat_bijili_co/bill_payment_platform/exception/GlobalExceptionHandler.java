@@ -112,6 +112,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ReceiptCannotBeGenerated.class)
+    public ResponseEntity<GenericResponse<?>> handleReceiptCannotBeGenerateException(ReceiptCannotBeGenerated ex, WebRequest request) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+
+        return new ResponseEntity<>(new GenericResponse<Map<String,Object>>(ex.getMessage(), body), HttpStatus.BAD_REQUEST);
+    }
+
 
 
     //Not able to send OTP on Email
