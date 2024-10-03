@@ -13,4 +13,5 @@ public interface WalletRepository extends JpaRepository <Wallet, Integer> {
     @Query("SELECT w FROM Wallet w WHERE w.customer.customerId = :customerId")
     Optional<Wallet> findByCustomerId(String customerId);
 
+
 }

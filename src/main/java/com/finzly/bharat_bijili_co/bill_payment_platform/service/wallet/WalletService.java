@@ -61,4 +61,15 @@ public class WalletService {
         );
         return wallet;
     }
+
+    public Wallet addBalance(String customerId, BigDecimal amount) {
+        Wallet wallet = walletRepository.findByCustomerId(customerId).orElseThrow(()->
+                new WalletNotFoundException("Wallet Not found with customer Id " + customerId)
+        );
+
+        BigDecimal previousBalance = wallet.getBalance();
+        wallet.setBalance(wallet.getBalance().add(amount));
+        walletRepository.save(wallet);
+        return wallet;
+    }
 }

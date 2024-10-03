@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
@@ -34,7 +35,7 @@ public class WalletPaymentController {
                 .amount(walletPaymentRequest.getAmount())
                 .paymentMethod(walletPaymentRequest.getPaymentMethod())
                 .paymentStatus(walletPaymentRequest.getPaymentStatus())
-                .txnRefId(UUID.randomUUID().toString())
+                .txnRefId("WALLET" + UUID.randomUUID().toString().replace("-", "").substring(0, 10))
                 .build();
 
         if(walletPaymentRequest.getPaymentStatus() == PaymentStatus.FAILED){
@@ -47,9 +48,17 @@ public class WalletPaymentController {
 
     @GetMapping("/{customerId}/balance")
     public ResponseEntity<?> getWalletBalance(@PathVariable("customerId") String customerId) {
+//        System.out.println("wallet balance fetched");
         Wallet wallet = walletService.getWalletBalance(customerId);
         return new ResponseEntity<>(new GenericResponse<>("Wallet Balance Retreived successfully ",wallet),
                 HttpStatus.OK);
+    }
+
+
+    @PutMapping("/{customerId}/addBalance")
+    public ResponseEntity<?> addBalance(@PathVariable("customerId") String customerId, @RequestBody @Valid BigDecimal amount) {
+        Wallet wallet = walletService.addBalance(customerId,amount);
+        return new ResponseEntity<>(new GenericResponse<>("Balance added to Wallet",wallet),HttpStatus.OK);
     }
 
 
