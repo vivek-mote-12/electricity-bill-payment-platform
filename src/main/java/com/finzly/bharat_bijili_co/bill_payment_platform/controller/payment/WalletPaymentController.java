@@ -1,5 +1,6 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.controller.payment;
 
+import com.finzly.bharat_bijili_co.bill_payment_platform.auth.dto.OtpVerificationRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.controller.customerCardDetails.CustomerCardDetailsController;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CardPaymentRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CreateCustomerCardDetailsRequest;
@@ -98,7 +99,12 @@ public class WalletPaymentController {
     @PostMapping("/topUpVerify")
     public ResponseEntity<?> topUpVerify(@RequestParam String OTP,@RequestBody TopUpRequestObj topUpRequestObj) {
         Wallet wallet;
-        if(paymentProcessingService.verifyOTP(OTP)){
+        OtpVerificationRequest otpVerificationRequest = OtpVerificationRequest
+                                                        .builder()
+                                                         .username(topUpRequestObj.getCustomerId())
+                                                            .otp(OTP)
+                                                            .build();
+        if(paymentProcessingService.verifyOTP(otpVerificationRequest)){
             wallet = walletService.addBalance(topUpRequestObj.getCustomerId(),topUpRequestObj.getAmount());
         }
         else {

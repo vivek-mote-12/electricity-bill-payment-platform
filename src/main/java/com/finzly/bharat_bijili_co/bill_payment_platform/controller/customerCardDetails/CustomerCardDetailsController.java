@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/customer_card_details")
 public class CustomerCardDetailsController {
@@ -43,8 +45,8 @@ public class CustomerCardDetailsController {
     @GetMapping("/{customerId}")
     public ResponseEntity<?> getCustomerCardDetails(@PathVariable("customerId") String customerId) {
         Customer customer = getCustomersService.getCustomerById(customerId);
-        CustomerCardDetails customerCardDetails = getCardDetailsService.getCustomerCardDetailsByCustomer(customer);
-        return new ResponseEntity<>(new GenericResponse<>("Success",customerCardDetails),
+        List<CustomerCardDetails> cards = getCardDetailsService.getCustomerCardDetailsByCustomer(customer);
+        return new ResponseEntity<>(new GenericResponse<>("Success",cards),
                 HttpStatus.OK);
     }
 

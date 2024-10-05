@@ -1,5 +1,6 @@
 package com.finzly.bharat_bijili_co.bill_payment_platform.controller.payment;
 
+import com.finzly.bharat_bijili_co.bill_payment_platform.auth.dto.OtpVerificationRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.controller.customerCardDetails.CustomerCardDetailsController;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CardPaymentRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CreateCustomerCardDetailsRequest;
@@ -16,9 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class CardPaymentController {
     private final CreateCardDetailsService createCardDetailsService;
     private final PaymentProcessingService paymentProcessingService;
-    private CustomerCardDetailsController customerCardDetailsController;
-    private PaymentDatabaseController paymentController;
-//    private final Payment payment;
+    private final CustomerCardDetailsController customerCardDetailsController;
+    private final PaymentDatabaseController paymentController;
 
     public CardPaymentController(CreateCardDetailsService createCardDetailsService,
                                  PaymentProcessingService paymentProcessingService,
@@ -41,10 +41,11 @@ public class CardPaymentController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyPayment(@RequestParam String OTP, @RequestBody RecordPaymentRequest recordPaymentRequest) {
+    public ResponseEntity<?> verifyPayment(@RequestParam String OTP,@RequestParam String customerId, @RequestBody RecordPaymentRequest recordPaymentRequest) {
         System.out.println(OTP);
-//        String billid = recordPaymentRequest.getBillId();
-        if(paymentProcessingService.verifyOTP(OTP)){
+        OtpVerificationRequest otpVerificationRequest = OtpVerificationRequest.builder().username(customerId).otp(OTP).build();
+
+        if(paymentProcessingService.verifyOTP(otpVerificationRequest)){
             System.out.println("OTP verified Successfully");
             recordPaymentRequest.setPaymentStatus(PaymentStatus.SUCCESS);
         }

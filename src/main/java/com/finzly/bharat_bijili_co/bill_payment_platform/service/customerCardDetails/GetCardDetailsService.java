@@ -6,6 +6,8 @@ import com.finzly.bharat_bijili_co.bill_payment_platform.model.CustomerCardDetai
 import com.finzly.bharat_bijili_co.bill_payment_platform.repository.customerCardDetails.CustomerCardDetailsRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GetCardDetailsService {
     CustomerCardDetailsRepository customerCardDetailsRepository;
@@ -19,9 +21,7 @@ public class GetCardDetailsService {
         );
     }
 
-    public CustomerCardDetails getCustomerCardDetailsByCustomer(Customer customer) {
-        return customerCardDetailsRepository.findByCustomer(customer).orElseThrow(()->
-                new CustomerCardDetailsNotFoundException("Card for this customer "+customer+" Not found")
-        );
+    public List<CustomerCardDetails> getCustomerCardDetailsByCustomer(Customer customer) {
+        return customerCardDetailsRepository.findByCustomer(customer);
     }
 }
