@@ -3,12 +3,15 @@ package com.finzly.bharat_bijili_co.bill_payment_platform.controller.customer;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.CreateCustomerRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.request.UpdateCustomerRequest;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.CsvResponse;
+import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.DashboardStatsResponse;
 import com.finzly.bharat_bijili_co.bill_payment_platform.dto.response.GenericResponse;
-import com.finzly.bharat_bijili_co.bill_payment_platform.exception.CustomerNotFoundException;
-import com.finzly.bharat_bijili_co.bill_payment_platform.exception.InvalidFileFormatException;
 import com.finzly.bharat_bijili_co.bill_payment_platform.model.Customer;
 import com.finzly.bharat_bijili_co.bill_payment_platform.service.customer.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,7 @@ public class CustomerController {
     private final FilterCustomerService filterCustomerService;
     private final DeleteCustomerService deleteCustomerService;
     private final AddCustomersUsingCsvService addCustomersUsingCsvService;
+    private final GetDashboardStatsService getDashboardStatsService;
 
 
     public CustomerController(
@@ -33,7 +37,8 @@ public class CustomerController {
             UpdateCustomerService updateCustomerService,
             FilterCustomerService filterCustomerService,
             DeleteCustomerService deleteCustomerService,
-            AddCustomersUsingCsvService addCustomersUsingCsvService
+            AddCustomersUsingCsvService addCustomersUsingCsvService,
+            GetDashboardStatsService getDashboardStatsService
     ){
         this.createCustomerService=createCustomerService;
         this.getCustomersService=getCustomersService;
@@ -41,6 +46,7 @@ public class CustomerController {
         this.filterCustomerService=filterCustomerService;
         this.deleteCustomerService=deleteCustomerService;
         this.addCustomersUsingCsvService=addCustomersUsingCsvService;
+        this.getDashboardStatsService = getDashboardStatsService;
     }
 
     @PostMapping
@@ -93,5 +99,33 @@ public class CustomerController {
     public ResponseEntity<?> addCustomersFromCsv(@RequestParam("file") MultipartFile file) {
         CsvResponse response = addCustomersUsingCsvService.addCustomersFromCsv(file);
         return new ResponseEntity<>(new GenericResponse<>("Records Added",response),HttpStatus.CREATED);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<?> getCustomers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String city,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+        Sort.Direction direction = sort[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sortObj = Sort.by(direction, sort[0]);
+
+        Pageable pageable = PageRequest.of(page, size, sortObj);
+
+        Page<Customer> customers=getCustomersService.getCustomers(search, city, pageable);
+        return new ResponseEntity<>(new GenericResponse<>("Success",customers),HttpStatus.OK);
+    }
+
+    @GetMapping("/cities/all")
+    public ResponseEntity<?> getAllCities(){
+        List<String> cities=getCustomersService.getDistinctCities();
+        return new ResponseEntity<>(new GenericResponse<>("Success",cities),HttpStatus.OK);
+    }
+
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<?> getDashboardStats(){
+        DashboardStatsResponse dashboardStatsResponse=getDashboardStatsService.getDashboardStats();
+        return new ResponseEntity<>(new GenericResponse<>("Success",dashboardStatsResponse),HttpStatus.OK);
     }
 }
